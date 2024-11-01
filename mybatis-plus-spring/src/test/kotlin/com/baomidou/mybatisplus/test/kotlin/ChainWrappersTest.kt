@@ -39,6 +39,15 @@ class ChainWrappersTest : BaseDbTest<UserMapper>() {
     }
 
     @Test
+    fun testDefaultMethod() {
+        doTestAutoCommit(fun(m) {
+            Assertions.assertEquals("hello baomidou!", m.hello())
+            Assertions.assertNotNull(m.findById(1))
+            Assertions.assertNull(m.findById(-1))
+        })
+    }
+
+    @Test
     fun testSetSql() {
         Assertions.assertTrue(
             ChainWrappers.ktUpdateChain(User::class.java).eq(User::id, 3).setSql("username = {0}", "haku").update()

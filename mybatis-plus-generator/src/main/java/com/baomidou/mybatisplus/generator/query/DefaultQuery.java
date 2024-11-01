@@ -132,10 +132,15 @@ public class DefaultQuery extends AbstractDatabaseQuery {
             field.setMetaInfo(metaInfo);
             tableInfo.addField(field);
         });
+        tableInfo.setIndexList(getIndex(tableName));
         tableInfo.processTable();
     }
 
     protected Map<String, DatabaseMetaDataWrapper.Column> getColumnsInfo(String tableName) {
         return databaseMetaDataWrapper.getColumnsInfo(tableName, true);
+    }
+
+    protected List<DatabaseMetaDataWrapper.Index> getIndex(String tableName) {
+        return databaseMetaDataWrapper.getIndex(tableName);
     }
 }

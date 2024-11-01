@@ -23,7 +23,9 @@ import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.builder.Entity;
 import com.baomidou.mybatisplus.generator.config.builder.Service;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
+import com.baomidou.mybatisplus.generator.jdbc.DatabaseMetaDataWrapper;
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -42,11 +44,13 @@ public class TableInfo {
     /**
      * 策略配置
      */
+    @Getter
     private final StrategyConfig strategyConfig;
 
     /**
      * 全局配置信息
      */
+    @Getter
     private final GlobalConfig globalConfig;
 
     /**
@@ -135,6 +139,23 @@ public class TableInfo {
     private final Entity entity;
 
     /**
+     * 索引信息
+     *
+     * @since 3.5.10
+     */
+    @Setter
+    @Getter
+    private List<DatabaseMetaDataWrapper.Index> indexList;
+
+    /**
+     * 字段信息
+     *
+     * @since 3.5.10
+     */
+    @Getter
+    private final Map<String, TableField> tableFieldMap = new HashMap<>();
+
+    /**
      * 构造方法
      *
      * @param configBuilder 配置构建
@@ -184,7 +205,9 @@ public class TableInfo {
         if (entity.matchIgnoreColumns(field.getColumnName())) {
             // 忽略字段不在处理
             return;
-        } else if (entity.matchSuperEntityColumns(field.getColumnName())) {
+        }
+        tableFieldMap.put(field.getName(), field);
+        if (entity.matchSuperEntityColumns(field.getColumnName())) {
             this.commonFields.add(field);
         } else {
             this.fields.add(field);
