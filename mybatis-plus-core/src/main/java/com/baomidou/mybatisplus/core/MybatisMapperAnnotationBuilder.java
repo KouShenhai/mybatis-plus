@@ -96,6 +96,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             parseCacheRef();
             IgnoreStrategy ignoreStrategy = InterceptorIgnoreHelper.initSqlParserInfoCache(type);
             for (Method method : type.getMethods()) {
+                InterceptorIgnoreHelper.initSqlParserInfoCache(ignoreStrategy, mapperName, method);
                 if (!canHaveStatement(method)) {
                     continue;
                 }
@@ -104,7 +105,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     parseResultMap(method);
                 }
                 try {
-                    InterceptorIgnoreHelper.initSqlParserInfoCache(ignoreStrategy, mapperName, method);
                     parseStatement(method);
                 } catch (IncompleteElementException e) {
                     configuration.addIncompleteMethod(new MybatisMethodResolver(this, method));

@@ -83,6 +83,17 @@ public abstract class InterceptorIgnoreHelper {
     }
 
     /**
+     * 获取忽略策略缓存信息
+     *
+     * @param key key
+     * @return 策略信息
+     * @since 3.5.10
+     */
+    public static IgnoreStrategy getIgnoreStrategy(String key) {
+        return IGNORE_STRATEGY_CACHE.get(key);
+    }
+
+    /**
      * 初始化缓存
      * <p>
      * Mapper#method 上 InterceptorIgnore 注解信息

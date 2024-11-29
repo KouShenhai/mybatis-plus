@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.test.BaseDbTest;
 import net.sf.jsqlparser.expression.LongValue;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.plugin.Interceptor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -81,6 +82,15 @@ public class TenantTest extends BaseDbTest<EntityMapper> {
         doTest(m -> {
             Page<Entity> page = m.selectPage(new Page<>(), null);
             assertThat(page.getTotal()).as("count 正常").isEqualTo(0);
+        });
+
+        doTest(m -> {
+            Entity entity = new Entity().setName("秋秋").setTenantId(2);
+            m.insert(entity);
+            Assertions.assertNull(m.selectById(entity.getId()));
+            Assertions.assertNotNull(m.selectByIdWithIgnore(entity.getId()));
+            Assertions.assertEquals(0, m.deleteById(entity.getId()));
+            Assertions.assertEquals(1, m.deleteByIdWithIgnore(entity.getId()));
         });
     }
 
