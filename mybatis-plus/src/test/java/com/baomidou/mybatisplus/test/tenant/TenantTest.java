@@ -1,6 +1,8 @@
 package com.baomidou.mybatisplus.test.tenant;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.plugins.IgnoreStrategy;
+import com.baomidou.mybatisplus.core.plugins.InterceptorIgnoreHelper;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.TenantLineInnerInterceptor;
@@ -91,6 +93,15 @@ public class TenantTest extends BaseDbTest<EntityMapper> {
             Assertions.assertNotNull(m.selectByIdWithIgnore(entity.getId()));
             Assertions.assertEquals(0, m.deleteById(entity.getId()));
             Assertions.assertEquals(1, m.deleteByIdWithIgnore(entity.getId()));
+        });
+
+        doTest(m -> {
+            Entity entity = new Entity().setName("秋秋").setTenantId(2);
+            m.insert(entity);
+            Assertions.assertNull(m.selectById(entity.getId()));
+            Assertions.assertNotNull(InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(true).build(), () -> m.selectById(entity.getId())));
+            Assertions.assertEquals(0, m.deleteById(entity.getId()));
+            Assertions.assertEquals(1, InterceptorIgnoreHelper.execute(IgnoreStrategy.builder().tenantLine(true).build(), () -> m.deleteById(entity.getId())));
         });
     }
 
